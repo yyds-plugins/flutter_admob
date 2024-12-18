@@ -31,6 +31,10 @@ class _FlutterGromorePageState extends State<FlutterAdmobPage> {
     FlutterAdmob.showInterstitialAd();
   }
 
+  static Future<void> showRewardedInterstitialAd() async {
+    FlutterAdmob.showRewardedInterstitialAd();
+  }
+
   /// 激励视频广告
   static Future<void> showRewardAd(
       {void Function(bool)? onRewardVerify, void Function()? onAdClose}) async {
@@ -43,34 +47,36 @@ class _FlutterGromorePageState extends State<FlutterAdmobPage> {
         appBar: AppBar(
           title: const Text("Demo"),
         ),
-        body: const Center(
+        body: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-// ElevatedButton(
-//   onPressed: initSDK,
-//   child: Text("初始化SDK"),
-// ),
-// SizedBox(height: 20),
-                ElevatedButton(
+                Text("banner广告"),
+                FlutterAdmob.bannerView(),
+                SizedBox(height: 20),
+                const ElevatedButton(
                   onPressed: showSplashAd,
                   child: Text("开屏广告"),
                 ),
                 SizedBox(height: 20),
-                SizedBox(height: 20),
-                ElevatedButton(
+                const ElevatedButton(
                   onPressed: showInterstitialAd,
                   child: Text("插屏广告"),
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
+                const ElevatedButton(
+                  onPressed: showRewardedInterstitialAd,
+                  child: Text("插屏激励广告"),
+                ),
+                SizedBox(height: 20),
+                const ElevatedButton(
                   onPressed: showRewardAd,
                   child: Text("激励视频广告"),
                 ),
                 SizedBox(height: 20),
-                Text("banner广告"),
-                AdmobBannerView()
+                Text("信息流广告"),
+                FlutterAdmob.feedView(),
               ],
             ),
           ),

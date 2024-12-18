@@ -21,12 +21,12 @@ class AppOpenAdManager {
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
-          debugPrint('$ad loaded');
+          debugPrint('$ad 开始加载广告');
           _appOpenLoadTime = DateTime.now();
           _appOpenAd = ad;
         },
         onAdFailedToLoad: (error) {
-          debugPrint('AppOpenAd failed to load: $error');
+          debugPrint('应用打开广告加载失败: $error');
         },
       ),
     );
@@ -43,16 +43,16 @@ class AppOpenAdManager {
   /// new ad.
   void showAdIfAvailable() {
     if (!isAdAvailable) {
-      debugPrint('Tried to show ad before available.');
+      debugPrint('广告无效');
       loadAd(_adUnitId);
       return;
     }
     if (_isShowingAd) {
-      debugPrint('Tried to show ad while already showing an ad.');
+      debugPrint('广告已经显示');
       return;
     }
     if (DateTime.now().subtract(maxCacheDuration).isAfter(_appOpenLoadTime!)) {
-      debugPrint('Maximum cache duration exceeded. Loading another ad.');
+      debugPrint('最大管广告缓存时间------Maximum cache duration exceeded. Loading another ad.');
       _appOpenAd!.dispose();
       _appOpenAd = null;
       loadAd(_adUnitId);
@@ -62,16 +62,16 @@ class AppOpenAdManager {
     _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
         _isShowingAd = true;
-        debugPrint('$ad onAdShowedFullScreenContent');
+        debugPrint('$ad 显示开屏广告');
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+        debugPrint('$ad 开屏广告无效: $error');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
       },
       onAdDismissedFullScreenContent: (ad) {
-        debugPrint('$ad onAdDismissedFullScreenContent');
+        debugPrint('$ad 开屏广告关闭');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;

@@ -3,18 +3,29 @@ library flutter_admob;
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_admob/banner_view.dart';
 import 'package:flutter_admob/widgets/AppLifecycleReactor.dart';
 import 'package:flutter_admob/widgets/AppOpenAdManager.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'adid.dart';
+import 'feed_view.dart';
 export 'adid.dart';
+export 'ad_page.dart';
 
 class FlutterAdmob {
-  static AdID adID = const AdID();
+  static AdID get adID => _adID;
+
+  static AdID _adID = const AdID();
+
+  static String testDevice = '2CFB15DF96F80C09B4534B12A968C542';
+
   static initSDK({required AdID adID}) async {
-    adID = adID;
-    MobileAds.instance.initialize();
+    _adID = adID;
+    await MobileAds.instance.initialize();
+
+    MobileAds.instance
+        .updateRequestConfiguration(RequestConfiguration(testDeviceIds: [testDevice]));
   }
 
   static showSplashAd() {
@@ -28,6 +39,9 @@ class FlutterAdmob {
   static showInterstitialAd() {
     InterstitialAd.load(
         adUnitId: Platform.isAndroid ? adID.androidInsertId : adID.iosInsertId,
+        // adUnitId: Platform.isAndroid
+        //     ? 'ca-app-pub-3940256099942544/1033173712'
+        //     : 'ca-app-pub-3940256099942544/4411468910',
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd interstitialAd) {
@@ -53,39 +67,7 @@ class FlutterAdmob {
         ));
   }
 
-  static showRewarded({void Function(bool)? onRewardVerify, void Function()? onAdClose}) {
-    RewardedAd.load(
-        adUnitId: Platform.isAndroid ? adID.androidRewardId : adID.iosRewardId,
-        request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(
-          onAdLoaded: (RewardedAd rewardedAd) {
-            debugPrint('$rewardedAd loaded.');
-
-            rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
-              onAdShowedFullScreenContent: (RewardedAd ad) =>
-                  debugPrint('ad onAdShowedFullScreenContent.'),
-              onAdDismissedFullScreenContent: (RewardedAd ad) {
-                debugPrint('$ad onAdDismissedFullScreenContent.');
-                ad.dispose();
-              },
-              onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-                debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-                ad.dispose();
-              },
-            );
-
-            rewardedAd.setImmersiveMode(true);
-            rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-              debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
-            });
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            debugPrint('RewardedAd failed to load: $error');
-          },
-        ));
-  }
-
-  void showRewardedInterstitialAd(String adUnitId) {
+  static void showRewardedInterstitialAd() {
     RewardedInterstitialAd.load(
         adUnitId: Platform.isAndroid
             ? adID.androidRewardedInterstitialId
@@ -118,25 +100,44 @@ class FlutterAdmob {
         ));
   }
 
-  static Widget feedView() {
-    NativeAd nativeAd = NativeAd(
-        adUnitId: Platform.isAndroid ? adID.androidNativeId : adID.iosNativeId,
-        // adUnitId: Platform.isAndroid ? 'ca-app-pub-3940256099942544/1044960115' : 'ca-app-pub-3940256099942544/2521693316', 测试
+  static showRewarded({void Function(bool)? onRewardVerify, void Function()? onAdClose}) {
+    RewardedAd.load(
+        adUnitId: Platform.isAndroid ? adID.androidRewardId : adID.iosRewardId,
         request: const AdRequest(),
-        factoryId: '',
-        listener: NativeAdListener(
-          onAdLoaded: (Ad ad) {
-            debugPrint('$NativeAd loaded.');
-          },
-          onAdFailedToLoad: (Ad ad, LoadAdError error) {
-            debugPrint('$NativeAd failedToLoad: $error');
-            ad.dispose();
-          },
-          onAdOpened: (Ad ad) => debugPrint('$NativeAd onAdOpened.'),
-          onAdClosed: (Ad ad) => debugPrint('$NativeAd onAdClosed.'),
-        ))
-      ..load();
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          onAdLoaded: (RewardedAd rewardedAd) {
+            debugPrint('$rewardedAd loaded.');
 
-    return AdWidget(ad: nativeAd);
+            rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+              onAdShowedFullScreenContent: (RewardedAd ad) =>
+                  debugPrint('ad onAdShowedFullScreenContent.'),
+              onAdDismissedFullScreenContent: (RewardedAd ad) {
+                debugPrint('$ad onAdDismissedFullScreenContent.');
+                ad.dispose();
+              },
+              onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+                debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+                ad.dispose();
+              },
+            );
+
+            rewardedAd.setImmersiveMode(true);
+            rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+              onRewardVerify!(true);
+              debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
+            });
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('RewardedAd failed to load: $error');
+          },
+        ));
+  }
+
+  static Widget bannerView() {
+    return AdmobBannerView(Platform.isAndroid ? adID.androidBannerId : adID.iosBannerId);
+  }
+
+  static Widget feedView() {
+    return FeedView(adUnitId: Platform.isAndroid ? adID.androidNativeId : adID.iosNativeId);
   }
 }
