@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'banner_view.dart';
 import 'flutter_admob.dart';
 
-class FlutterAdmobPage extends StatefulWidget {
-  const FlutterAdmobPage({Key? key}) : super(key: key);
+class AdmobPage extends StatefulWidget {
+  const AdmobPage({Key? key}) : super(key: key);
 
   @override
-  State<FlutterAdmobPage> createState() => _FlutterGromorePageState();
+  State<AdmobPage> createState() => _AdmobPagePageState();
 }
 
-class _FlutterGromorePageState extends State<FlutterAdmobPage> {
+class _AdmobPagePageState extends State<AdmobPage> {
   String interstitialId = "";
 
   @override
