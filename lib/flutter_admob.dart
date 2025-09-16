@@ -13,7 +13,7 @@ import 'feed_view.dart';
 export 'adid.dart';
 export 'ad_page.dart';
 
-class FlutterAdmob {
+class FlutterGTAds {
   static AdID get adID => _adID;
 
   static AdID _adID = const AdID();
@@ -24,15 +24,13 @@ class FlutterAdmob {
     _adID = adID;
     await MobileAds.instance.initialize();
 
-    MobileAds.instance
-        .updateRequestConfiguration(RequestConfiguration(testDeviceIds: [testDevice]));
+    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: [testDevice]));
   }
 
   static showSplashAd() {
     AppOpenAdManager appOpenAdManager = AppOpenAdManager()
       ..loadAd(Platform.isAndroid ? adID.androidSplashId : adID.iosSplashId);
-    AppLifecycleReactor appLifecycleReactor =
-        AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+    AppLifecycleReactor appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
     appLifecycleReactor.listenToAppStateChanges();
   }
 
@@ -48,8 +46,7 @@ class FlutterAdmob {
             debugPrint('$interstitialAd loaded');
             interstitialAd.setImmersiveMode(true);
             interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-              onAdShowedFullScreenContent: (InterstitialAd ad) =>
-                  debugPrint('ad onAdShowedFullScreenContent.'),
+              onAdShowedFullScreenContent: (InterstitialAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
               onAdDismissedFullScreenContent: (InterstitialAd ad) {
                 debugPrint('$ad onAdDismissedFullScreenContent.');
                 ad.dispose();
@@ -69,9 +66,7 @@ class FlutterAdmob {
 
   static void showRewardedInterstitialAd() {
     RewardedInterstitialAd.load(
-        adUnitId: Platform.isAndroid
-            ? adID.androidRewardedInterstitialId
-            : adID.iosRewardedInterstitialId,
+        adUnitId: Platform.isAndroid ? adID.androidRewardedInterstitialId : adID.iosRewardedInterstitialId,
         request: const AdRequest(),
         rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
           onAdLoaded: (RewardedInterstitialAd ad) {
@@ -109,8 +104,7 @@ class FlutterAdmob {
             debugPrint('$rewardedAd loaded.');
 
             rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
-              onAdShowedFullScreenContent: (RewardedAd ad) =>
-                  debugPrint('ad onAdShowedFullScreenContent.'),
+              onAdShowedFullScreenContent: (RewardedAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
               onAdDismissedFullScreenContent: (RewardedAd ad) {
                 debugPrint('$ad onAdDismissedFullScreenContent.');
                 ad.dispose();

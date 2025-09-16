@@ -23,22 +23,21 @@ class _AdmobPagePageState extends State<AdmobPage> {
 
   /// 展示开屏广告
   static Future<void> showSplashAd() async {
-    FlutterAdmob.showSplashAd();
+    FlutterGTAds.showSplashAd();
   }
 
   /// 加载插屏广告
   static Future<void> showInterstitialAd() async {
-    FlutterAdmob.showInterstitialAd();
+    FlutterGTAds.showInterstitialAd();
   }
 
   static Future<void> showRewardedInterstitialAd() async {
-    FlutterAdmob.showRewardedInterstitialAd();
+    FlutterGTAds.showRewardedInterstitialAd();
   }
 
   /// 激励视频广告
-  static Future<void> showRewardAd(
-      {void Function(bool)? onRewardVerify, void Function()? onAdClose}) async {
-    FlutterAdmob.showRewarded();
+  static Future<void> showRewardAd({void Function(bool)? onRewardVerify, void Function()? onAdClose}) async {
+    FlutterGTAds.showRewarded();
   }
 
   @override
@@ -53,7 +52,7 @@ class _AdmobPagePageState extends State<AdmobPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("banner广告"),
-                FlutterAdmob.bannerView(),
+                FlutterGTAds.bannerView(),
                 SizedBox(height: 20),
                 const ElevatedButton(
                   onPressed: showSplashAd,
@@ -76,7 +75,7 @@ class _AdmobPagePageState extends State<AdmobPage> {
                 ),
                 SizedBox(height: 20),
                 Text("信息流广告"),
-                FlutterAdmob.feedView(),
+                FlutterGTAds.feedView(),
               ],
             ),
           ),
