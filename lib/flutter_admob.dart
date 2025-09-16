@@ -1,14 +1,10 @@
 library flutter_admob;
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_admob/banner_view.dart';
 import 'package:easy_admob_ads_flutter/easy_admob_ads_flutter.dart';
 
 import 'adid.dart';
-import 'feed_view.dart';
 export 'adid.dart';
 export 'ad_page.dart';
 
@@ -99,7 +95,7 @@ class FlutterGTAds {
   }
 
   static Widget bannerView() {
-    return const AdmobBannerAd(collapsible: true, height: 100);
+    return const AdmobBannerAd(collapsible: true, height: 64);
   }
 
   static Widget feedView() {
