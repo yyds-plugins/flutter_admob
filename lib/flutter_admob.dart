@@ -13,7 +13,6 @@ class FlutterGTAds {
 
   static AdID _adID = const AdID();
 
-  static String testDevice = '2CFB15DF96F80C09B4534B12A968C542';
   static List<AdID> get configs => _configs;
   static List<AdID> _configs = [];
 
@@ -28,22 +27,20 @@ class FlutterGTAds {
     // Leave any value as an empty string ("") to skip that ad type.
     AdIdRegistry.initialize(
       ios: {
-        AdType.banner: kDebugMode ? _adID.iosBannerId : 'ca-app-pub-3940256099942544/8388050270', // Test ID
-        AdType.interstitial: kDebugMode ? _adID.iosInsertId : 'ca-app-pub-3940256099942544/4411468910', // Test ID
-        AdType.rewarded: kDebugMode ? _adID.iosRewardId : 'ca-app-pub-3940256099942544/1712485313', // Test ID
-        AdType.rewardedInterstitial:
-            kDebugMode ? _adID.iosRewardedInterstitialId : 'ca-app-pub-3940256099942544/6978759866', // Test ID
-        AdType.appOpen: kDebugMode ? _adID.iosSplashId : 'ca-app-pub-3940256099942544/5575463023', // Test ID
-        AdType.native: kDebugMode ? _adID.iosNativeId : 'ca-app-pub-3940256099942544/3986624511', // Test ID
+        AdType.banner: _adID.iosBannerId, // Test ID
+        AdType.interstitial: _adID.iosInsertId, // Test ID
+        AdType.rewarded: _adID.iosRewardId, // Test ID
+        AdType.rewardedInterstitial: _adID.iosRewardedInterstitialId, // Test ID
+        AdType.appOpen: _adID.iosSplashId, // Test ID
+        AdType.native: _adID.iosNativeId, // Test ID
       },
       android: {
-        AdType.banner: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/2014213617', // Test ID
-        AdType.interstitial: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/1033173712', // Test ID
-        AdType.rewarded: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/5224354917', // Test ID
-        AdType.rewardedInterstitial:
-            kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/5354046379', // Test ID
-        AdType.appOpen: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/3419835294', // Test ID
-        AdType.native: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/2247696110', // Test ID
+        AdType.banner: _adID.androidBannerId, // Test ID
+        AdType.interstitial: _adID.androidBannerId, // Test ID
+        AdType.rewarded: _adID.androidBannerId, // Test ID
+        AdType.rewardedInterstitial: _adID.androidBannerId, // Test ID
+        AdType.appOpen: _adID.androidBannerId, // Test ID
+        AdType.native: _adID.androidBannerId, // Test ID
       },
     );
 
