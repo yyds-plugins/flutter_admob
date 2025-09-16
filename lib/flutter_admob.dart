@@ -1,7 +1,6 @@
 library flutter_admob;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:easy_admob_ads_flutter/easy_admob_ads_flutter.dart';
 
 import 'adid.dart';
@@ -16,7 +15,12 @@ class FlutterGTAds {
   static List<AdID> get configs => _configs;
   static List<AdID> _configs = [];
 
-  static initSDK({required List<AdID> configs}) async {
+  late AdmobAppOpenAd _appOpenAd;
+  late AdmobInterstitialAd _interstitialAd;
+  late AdmobRewardedAd _rewardedAd;
+  late AdmobRewardedInterstitialAd _rewardedInterstitialAd;
+
+  initSDK({required List<AdID> configs}) async {
     if (!configs.isNotEmpty) return;
     _configs = configs;
     _adID = configs.first;
@@ -57,45 +61,65 @@ class FlutterGTAds {
     // await AdRealIdValidation.validateAdUnits();
   }
 
-  static showSplashAd() {
-    final appOpenAd = AdmobAppOpenAd();
-    appOpenAd.loadAd();
-    appOpenAd.showAdIfAvailable();
+  void loadAdmobAppOpenAd() {
+    _appOpenAd = AdmobAppOpenAd();
+    _appOpenAd.loadAd();
   }
 
-  static showInsertAd() {
-    final interstitialAd = AdmobInterstitialAd();
-    interstitialAd.loadAd();
-    interstitialAd.showAd();
+  void showSplashAd() {
+    _appOpenAd.showAdIfAvailable();
   }
 
-  static void showRewardedInterstitialAd({required void Function(int, bool) onVerifyClose}) {
-    final rewardedInterstitialAd = AdmobRewardedInterstitialAd(
+  void showInsertAd() {
+    _interstitialAd = AdmobInterstitialAd(
+      minTimeBetweenAds: const Duration(seconds: 20),
+      onAdStateChanged: (state) {
+        if (state == AdState.loaded) {
+          _interstitialAd.showAd();
+        }
+        debugPrint('Rewarded ad state: $state');
+      },
+    );
+    _interstitialAd.loadAd();
+  }
+
+  void showRewardedInterstitialAd({required void Function(int, bool) onVerifyClose}) {
+    _rewardedInterstitialAd = AdmobRewardedInterstitialAd(
+      onAdStateChanged: (state) {
+        if (state == AdState.loaded) {
+          _rewardedInterstitialAd.showAd();
+        }
+        debugPrint('Rewarded ad state: $state');
+      },
       onRewardEarned: (reward) {
         // Grant reward here
         onVerifyClose(0, true);
       },
     );
-    rewardedInterstitialAd.loadAd();
-    rewardedInterstitialAd.showAd();
+    _rewardedInterstitialAd.loadAd();
   }
 
-  static showRewardAd({required void Function(int, bool) onVerifyClose}) {
-    final rewardedAd = AdmobRewardedAd(
+  showRewardAd({required void Function(int, bool) onVerifyClose}) {
+    _rewardedAd = AdmobRewardedAd(
+      onAdStateChanged: (state) {
+        if (state == AdState.loaded) {
+          _rewardedAd.showAd();
+        }
+        debugPrint('Rewarded ad state: $state');
+      },
       onRewardEarned: (reward) {
         // Grant the user a reward
         onVerifyClose(0, true);
       },
     );
-    rewardedAd.loadAd();
-    rewardedAd.showAd();
+    _rewardedAd.loadAd();
   }
 
-  static Widget bannerView() {
+  Widget bannerView() {
     return const AdmobBannerAd(collapsible: true, height: 64);
   }
 
-  static Widget feedView() {
-    return AdmobNativeAd.medium();
+  Widget feedView() {
+    return AdmobNativeAd.small();
   }
 }

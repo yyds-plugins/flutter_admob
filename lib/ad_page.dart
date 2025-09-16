@@ -1,6 +1,8 @@
 import 'package:easy_admob_ads_flutter/easy_admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 
+import 'flutter_admob.dart';
+
 class AdPage extends StatelessWidget {
   const AdPage({super.key});
 
