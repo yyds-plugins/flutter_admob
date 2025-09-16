@@ -37,7 +37,7 @@ class _AdmobPagePageState extends State<AdmobPage> {
 
   /// 激励视频广告
   static Future<void> showRewardAd({void Function(bool)? onRewardVerify, void Function()? onAdClose}) async {
-    FlutterGTAds.showRewarded();
+    FlutterGTAds.showRewardAd(onVerifyClose: (code, v) {});
   }
 
   @override

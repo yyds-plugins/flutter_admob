@@ -99,7 +99,7 @@ class FlutterGTAds {
         ));
   }
 
-  static showRewarded({void Function(bool)? onRewardVerify, void Function()? onAdClose}) {
+  static showRewardAd({required void Function(int, bool) onVerifyClose}) {
     RewardedAd.load(
         adUnitId: Platform.isAndroid ? adID.androidRewardId : adID.iosRewardId,
         request: const AdRequest(),
@@ -121,7 +121,7 @@ class FlutterGTAds {
 
             rewardedAd.setImmersiveMode(true);
             rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-              onRewardVerify!(true);
+              onVerifyClose(0, true);
               debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
             });
           },
