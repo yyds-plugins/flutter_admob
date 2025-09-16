@@ -19,9 +19,13 @@ class FlutterGTAds {
   static AdID _adID = const AdID();
 
   static String testDevice = '2CFB15DF96F80C09B4534B12A968C542';
+  static List<AdID> get configs => _configs;
+  static List<AdID> _configs = [];
 
-  static initSDK({required AdID adID}) async {
-    _adID = adID;
+  static initSDK({required List<AdID> configs}) async {
+    if (!configs.isNotEmpty) return;
+    _configs = configs;
+    _adID = configs.first;
     await MobileAds.instance.initialize();
 
     MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: [testDevice]));
