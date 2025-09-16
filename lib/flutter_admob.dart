@@ -61,9 +61,9 @@ class FlutterGTAds {
     // await AdRealIdValidation.validateAdUnits();
   }
 
-  void loadAdmobAppOpenAd() {
+  Future<void> loadAdmobAppOpenAd() async {
     _appOpenAd = AdmobAppOpenAd();
-    _appOpenAd.loadAd();
+    await _appOpenAd.loadAd();
   }
 
   void showSplashAd() {
