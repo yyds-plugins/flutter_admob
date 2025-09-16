@@ -61,23 +61,46 @@ class FlutterGTAds {
     // await AdRealIdValidation.validateAdUnits();
   }
 
-  Future<void> loadAdmobAppOpenAd() async {
+  Future<void> showSplashAd({required void Function() dismiss}) async {
     _appOpenAd = AdmobAppOpenAd();
+    _appOpenAd.onAdStateChanged = (state) {
+      switch (state) {
+        case AdState.initial: //
+          // Initial state before any action
+          break;
+        case AdState.loading: //加载中
+          // Ad is loading
+          break;
+        case AdState.loaded: //加载完成
+          // Ad loaded successfully and ready to show
+          _appOpenAd.showAdIfAvailable();
+          dismiss();
+          break;
+        case AdState.error: //加载错误
+          dismiss();
+          // Error occurred during loading/showing
+          break;
+        case AdState.closed: //用户关闭了广告
+          dismiss();
+          // Ad was closed by the user
+          break;
+        case AdState.disabled: //禁用了广告
+          dismiss();
+          // Ad was disabled by showAd = false
+          break;
+      }
+    };
     await _appOpenAd.loadAd();
   }
 
-  void showSplashAd() {
-    _appOpenAd.showAdIfAvailable();
-  }
-
-  void showInsertAd() {
+  Future<void> showInsertAd() async {
     _interstitialAd = AdmobInterstitialAd(
       minTimeBetweenAds: const Duration(seconds: 20),
       onAdStateChanged: (state) {
         if (state == AdState.loaded) {
           _interstitialAd.showAd();
         }
-        debugPrint('Rewarded ad state: $state');
+        debugPrint('AdmobInterstitialAd ad state: $state');
       },
     );
     _interstitialAd.loadAd();
@@ -120,6 +143,6 @@ class FlutterGTAds {
   }
 
   Widget feedView() {
-    return AdmobNativeAd.small();
+    return AdmobNativeAd.medium();
   }
 }
