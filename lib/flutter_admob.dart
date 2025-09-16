@@ -38,7 +38,7 @@ class FlutterGTAds {
     appLifecycleReactor.listenToAppStateChanges();
   }
 
-  static showInterstitialAd() {
+  static showInsertAd() {
     InterstitialAd.load(
         adUnitId: Platform.isAndroid ? adID.androidInsertId : adID.iosInsertId,
         // adUnitId: Platform.isAndroid

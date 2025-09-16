@@ -28,7 +28,7 @@ class _AdmobPagePageState extends State<AdmobPage> {
 
   /// 加载插屏广告
   static Future<void> showInterstitialAd() async {
-    FlutterGTAds.showInterstitialAd();
+    FlutterGTAds.showInsertAd();
   }
 
   static Future<void> showRewardedInterstitialAd() async {
