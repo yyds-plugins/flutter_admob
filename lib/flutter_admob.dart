@@ -3,10 +3,9 @@ library flutter_admob;
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_admob/banner_view.dart';
-import 'package:flutter_admob/widgets/AppLifecycleReactor.dart';
-import 'package:flutter_admob/widgets/AppOpenAdManager.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:easy_admob_ads_flutter/easy_admob_ads_flutter.dart';
 
 import 'adid.dart';
 import 'feed_view.dart';
@@ -26,116 +25,84 @@ class FlutterGTAds {
     if (!configs.isNotEmpty) return;
     _configs = configs;
     _adID = configs.first;
-    await MobileAds.instance.initialize();
 
-    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: [testDevice]));
+    AdHelper.setupAdLogging();
+    AdHelper.testDeviceIds = ['2CFB15DF96F80C09B4534B12A968C542'];
+    // Initialize ad unit IDs for Android and/or iOS (required for at least one)
+    // Leave any value as an empty string ("") to skip that ad type.
+    AdIdRegistry.initialize(
+      ios: {
+        AdType.banner: kDebugMode ? _adID.iosBannerId : 'ca-app-pub-3940256099942544/8388050270', // Test ID
+        AdType.interstitial: kDebugMode ? _adID.iosInsertId : 'ca-app-pub-3940256099942544/4411468910', // Test ID
+        AdType.rewarded: kDebugMode ? _adID.iosRewardId : 'ca-app-pub-3940256099942544/1712485313', // Test ID
+        AdType.rewardedInterstitial:
+            kDebugMode ? _adID.iosRewardedInterstitialId : 'ca-app-pub-3940256099942544/6978759866', // Test ID
+        AdType.appOpen: kDebugMode ? _adID.iosSplashId : 'ca-app-pub-3940256099942544/5575463023', // Test ID
+        AdType.native: kDebugMode ? _adID.iosNativeId : 'ca-app-pub-3940256099942544/3986624511', // Test ID
+      },
+      android: {
+        AdType.banner: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/2014213617', // Test ID
+        AdType.interstitial: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/1033173712', // Test ID
+        AdType.rewarded: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/5224354917', // Test ID
+        AdType.rewardedInterstitial:
+            kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/5354046379', // Test ID
+        AdType.appOpen: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/3419835294', // Test ID
+        AdType.native: kDebugMode ? _adID.androidBannerId : 'ca-app-pub-3940256099942544/2247696110', // Test ID
+      },
+    );
+
+    // Global Ad Configuration
+    AdHelper.showAds = true; // Set to false to disable all ads globally
+    // AdHelper.showAppOpenAds = true; // Set to false to disable App Open Ad on startup
+
+    // AdHelper.showConstentGDPR = true; // Simulate GDPR consent (debug only, false in release)
+
+    // Initialize Google Mobile Ads SDK
+    await AdmobService().initialize();
+
+    // Optional: Use during development to test if all ad units load successfully
+    // await AdRealIdValidation.validateAdUnits();
   }
 
   static showSplashAd() {
-    AppOpenAdManager appOpenAdManager = AppOpenAdManager()
-      ..loadAd(Platform.isAndroid ? adID.androidSplashId : adID.iosSplashId);
-    AppLifecycleReactor appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-    appLifecycleReactor.listenToAppStateChanges();
+    final appOpenAd = AdmobAppOpenAd();
+    appOpenAd.loadAd();
+    appOpenAd.showAdIfAvailable();
   }
 
   static showInsertAd() {
-    InterstitialAd.load(
-        adUnitId: Platform.isAndroid ? adID.androidInsertId : adID.iosInsertId,
-        // adUnitId: Platform.isAndroid
-        //     ? 'ca-app-pub-3940256099942544/1033173712'
-        //     : 'ca-app-pub-3940256099942544/4411468910',
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd interstitialAd) {
-            debugPrint('$interstitialAd loaded');
-            interstitialAd.setImmersiveMode(true);
-            interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-              onAdShowedFullScreenContent: (InterstitialAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
-              onAdDismissedFullScreenContent: (InterstitialAd ad) {
-                debugPrint('$ad onAdDismissedFullScreenContent.');
-                ad.dispose();
-              },
-              onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-                debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-                ad.dispose();
-              },
-            );
-            interstitialAd.show();
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            debugPrint('InterstitialAd failed to load: $error.');
-          },
-        ));
+    final interstitialAd = AdmobInterstitialAd();
+    interstitialAd.loadAd();
+    interstitialAd.showAd();
   }
 
-  static void showRewardedInterstitialAd() {
-    RewardedInterstitialAd.load(
-        adUnitId: Platform.isAndroid ? adID.androidRewardedInterstitialId : adID.iosRewardedInterstitialId,
-        request: const AdRequest(),
-        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
-          onAdLoaded: (RewardedInterstitialAd ad) {
-            debugPrint('$ad loaded.');
-            ad.fullScreenContentCallback = FullScreenContentCallback(
-              onAdShowedFullScreenContent: (RewardedInterstitialAd ad) =>
-                  debugPrint('$ad onAdShowedFullScreenContent.'),
-              onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-                debugPrint('$ad onAdDismissedFullScreenContent.');
-                ad.dispose();
-              },
-              onAdFailedToShowFullScreenContent: (RewardedInterstitialAd ad, AdError error) {
-                debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-                ad.dispose();
-              },
-            );
-
-            ad.setImmersiveMode(true);
-            ad.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-              debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
-            });
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            debugPrint('RewardedInterstitialAd failed to load: $error');
-          },
-        ));
+  static void showRewardedInterstitialAd({required void Function(int, bool) onVerifyClose}) {
+    final rewardedInterstitialAd = AdmobRewardedInterstitialAd(
+      onRewardEarned: (reward) {
+        // Grant reward here
+        onVerifyClose(0, true);
+      },
+    );
+    rewardedInterstitialAd.loadAd();
+    rewardedInterstitialAd.showAd();
   }
 
   static showRewardAd({required void Function(int, bool) onVerifyClose}) {
-    RewardedAd.load(
-        adUnitId: Platform.isAndroid ? adID.androidRewardId : adID.iosRewardId,
-        request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(
-          onAdLoaded: (RewardedAd rewardedAd) {
-            debugPrint('$rewardedAd loaded.');
-
-            rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
-              onAdShowedFullScreenContent: (RewardedAd ad) => debugPrint('ad onAdShowedFullScreenContent.'),
-              onAdDismissedFullScreenContent: (RewardedAd ad) {
-                debugPrint('$ad onAdDismissedFullScreenContent.');
-                ad.dispose();
-              },
-              onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-                debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-                ad.dispose();
-              },
-            );
-
-            rewardedAd.setImmersiveMode(true);
-            rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-              onVerifyClose(0, true);
-              debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
-            });
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            debugPrint('RewardedAd failed to load: $error');
-          },
-        ));
+    final rewardedAd = AdmobRewardedAd(
+      onRewardEarned: (reward) {
+        // Grant the user a reward
+        onVerifyClose(0, true);
+      },
+    );
+    rewardedAd.loadAd();
+    rewardedAd.showAd();
   }
 
   static Widget bannerView() {
-    return AdmobBannerView(Platform.isAndroid ? adID.androidBannerId : adID.iosBannerId);
+    return const AdmobBannerAd(collapsible: true, height: 100);
   }
 
   static Widget feedView() {
-    return FeedView(adUnitId: Platform.isAndroid ? adID.androidNativeId : adID.iosNativeId);
+    return AdmobNativeAd.medium();
   }
 }

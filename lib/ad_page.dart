@@ -32,7 +32,7 @@ class _AdmobPagePageState extends State<AdmobPage> {
   }
 
   static Future<void> showRewardedInterstitialAd() async {
-    FlutterGTAds.showRewardedInterstitialAd();
+    FlutterGTAds.showRewardedInterstitialAd(onVerifyClose: (code, v) {});
   }
 
   /// 激励视频广告

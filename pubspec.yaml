@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_mobile_ads: ^6.0.0 #谷歌广告
+  easy_admob_ads_flutter: ^1.0.1
 
 dev_dependencies:
   flutter_test:
