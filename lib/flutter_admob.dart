@@ -40,11 +40,11 @@ class FlutterGTAds {
       },
       android: {
         AdType.banner: _adID.androidBannerId, // Test ID
-        AdType.interstitial: _adID.androidBannerId, // Test ID
-        AdType.rewarded: _adID.androidBannerId, // Test ID
-        AdType.rewardedInterstitial: _adID.androidBannerId, // Test ID
-        AdType.appOpen: _adID.androidBannerId, // Test ID
-        AdType.native: _adID.androidBannerId, // Test ID
+        AdType.interstitial: _adID.androidInsertId, // Test ID
+        AdType.rewarded: _adID.androidRewardId, // Test ID
+        AdType.rewardedInterstitial: _adID.androidRewardedInterstitialId, // Test ID
+        AdType.appOpen: _adID.androidSplashId, // Test ID
+        AdType.native: _adID.androidNativeId, // Test ID
       },
     );
 
