@@ -61,7 +61,7 @@ class FlutterGTAds {
     // await AdRealIdValidation.validateAdUnits();
   }
 
-  Future<void> showSplashAd({required void Function() dismiss}) async {
+  Widget showSplashAd() {
     _appOpenAd = AdmobAppOpenAd();
     _appOpenAd.onAdStateChanged = (state) {
       switch (state) {
@@ -74,23 +74,25 @@ class FlutterGTAds {
         case AdState.loaded: //加载完成
           // Ad loaded successfully and ready to show
           _appOpenAd.showAdIfAvailable();
-          dismiss();
           break;
         case AdState.error: //加载错误
-          dismiss();
           // Error occurred during loading/showing
           break;
         case AdState.closed: //用户关闭了广告
-          dismiss();
           // Ad was closed by the user
           break;
         case AdState.disabled: //禁用了广告
-          dismiss();
           // Ad was disabled by showAd = false
           break;
       }
     };
-    await _appOpenAd.loadAd();
+    _appOpenAd.loadAd();
+    return const SizedBox.shrink();
+  }
+
+  Widget splashWidget({BuildContext? context, required void Function() dismiss}) {
+    dismiss();
+    return const SizedBox.shrink();
   }
 
   Future<void> showInsertAd() async {
